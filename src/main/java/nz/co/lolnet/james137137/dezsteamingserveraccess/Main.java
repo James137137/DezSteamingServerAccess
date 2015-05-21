@@ -29,10 +29,9 @@ import javax.swing.JButton;
  * @author James
  */
 public class Main {
-    
-    
+
     public static final String serverName = "Stream";
-    private static Integer imageId; 
+    private static Integer imageId;
     private static final String domainName = "dezil.ddns.net";
     private static final int portToPing = 80;
 
@@ -60,12 +59,30 @@ public class Main {
             if (droplet.getName().equals(serverName)) {
                 apiClient.deleteDroplet(droplet.getId());
                 System.out.println("Removed");
-                MainGUI.busy = false;
-                help();
-                return;
             }
 
         }
+        int i = 0;
+        while (serverExist(serverName)) {
+            if (i == 0 && event != null) {
+                ((JButton) event.getSource()).setText("Stoping Server.");
+            } else if (i == 1 && event != null) {
+                ((JButton) event.getSource()).setText("Stoping Server..");
+            } else if (i == 2 && event != null) {
+                ((JButton) event.getSource()).setText("Stoping Server...");
+            } else if (event != null) {
+                ((JButton) event.getSource()).setText("Stoping Server");
+                i = 0;
+            }
+            i++;
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+        help();
         MainGUI.busy = false;
 
     }
@@ -422,7 +439,6 @@ public class Main {
                 Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
                 MainGUI.busy = false;
             }
-            
 
         }
     }
