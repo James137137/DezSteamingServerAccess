@@ -145,7 +145,7 @@ public class MainGUI extends JFrame {
         JComboBox combo = new JComboBox(items);
         JPanel panel = new JPanel(new GridLayout(0, 1));
         panel.add(combo);
-        int result = JOptionPane.showConfirmDialog(null, panel, "Test",
+        int result = JOptionPane.showConfirmDialog(null, panel, "Change Snapshot",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
             int newID = Integer.parseInt(combo.getSelectedItem().toString().split(" -")[0]);
