@@ -38,9 +38,9 @@ public class MainGUI extends JFrame {
         setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getSize().width / 2 - 50, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - getSize().height / 2);
         initComponents();
         try {
-            if (Main.serverExist(Main.serverName)) {
+            if (MyAPIMethods.serverExist(Main.serverName)) {
                 this.setTitle("Server is Online");
-                if (!Main.SimplePing()) {
+                if (!MyAPIMethods.SimplePing()) {
                     this.setTitle("Server is Online : needs rebooting");
                 }
 
@@ -66,7 +66,7 @@ public class MainGUI extends JFrame {
                     busy = true;
                     if (MainGUI.currentState == false) {
                         try {
-                            if (Main.serverExist(Main.serverName)) {
+                            if (MyAPIMethods.serverExist(Main.serverName)) {
                                 ((JButton) event.getSource()).setText("Try again later.");
                                 busy = false;
                             } else {
@@ -82,7 +82,7 @@ public class MainGUI extends JFrame {
 
                     } else {
                         try {
-                            if (!Main.serverExist(Main.serverName)) {
+                            if (!MyAPIMethods.serverExist(Main.serverName)) {
                                 ((JButton) event.getSource()).setText("Can't find server");
                                 busy = false;
                             } else {
