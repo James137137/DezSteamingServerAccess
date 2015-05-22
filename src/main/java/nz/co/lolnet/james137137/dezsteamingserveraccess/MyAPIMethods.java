@@ -10,6 +10,7 @@ import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.pojo.Droplet;
 import com.myjeeva.digitalocean.pojo.Droplets;
 import com.myjeeva.digitalocean.pojo.Image;
+import com.myjeeva.digitalocean.pojo.Images;
 import com.myjeeva.digitalocean.pojo.Region;
 import com.myjeeva.digitalocean.pojo.Snapshot;
 import java.awt.event.ActionEvent;
@@ -222,12 +223,10 @@ public class MyAPIMethods {
     static String[] getSnapshotList() {
         List<String> list = new ArrayList<>();
         list.add(Main.imageId + " - Current");
+
         try {
-            for (Droplet droplet : Main.apiClient.getAvailableDroplets(1).getDroplets()) {
-                List<Snapshot> snapshots = Main.apiClient.getAvailableSnapshots(droplet.getId(), 1).getSnapshots();
-                for (Snapshot snapshot : snapshots) {
-                    list.add(snapshot.getId() + " - " + snapshot.getName());
-                }
+            for (Image image : Main.apiClient.getUserImages(0).getImages()) {
+                list.add(image.getId() + " - " + image.getName() + " - " + image.getCreatedDate());
             }
         } catch (DigitalOceanException ex) {
             Logger.getLogger(MyAPIMethods.class.getName()).log(Level.SEVERE, null, ex);
