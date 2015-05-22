@@ -10,14 +10,8 @@ import com.myjeeva.digitalocean.exception.DigitalOceanException;
 import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.impl.DigitalOceanClient;
 import com.myjeeva.digitalocean.pojo.Droplet;
-import com.myjeeva.digitalocean.pojo.Droplets;
-import com.myjeeva.digitalocean.pojo.Image;
-import com.myjeeva.digitalocean.pojo.Region;
 import com.myjeeva.digitalocean.pojo.Snapshot;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -40,9 +34,10 @@ public class Main {
     public static DigitalOcean apiClient;
 
     public static void main(String[] args) {
+        Preferences userNodeForPackage = java.util.prefs.Preferences.userRoot();
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
-                if (!debug) {
+                if (MainGUI.closeServerOnExit.getState()) {
                     try {
                         if (MyAPIMethods.serverExist(Main.serverName)) {
                             MyAPIMethods.destoryServer(Main.serverName, null);
@@ -51,11 +46,11 @@ public class Main {
                         Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                java.util.prefs.Preferences.userRoot().put("dezsteamingserveraccessdestoryserveronexit", "" + MainGUI.closeServerOnExit.getState());
 
             }
         }, "Shutdown-thread"));
         Scanner myScanner = new Scanner(System.in);
-        Preferences userNodeForPackage = java.util.prefs.Preferences.userRoot();
         String APIKey = userNodeForPackage.get("streamdigitaloceanapikey", "");
         if (APIKey == null || APIKey.equalsIgnoreCase("")) {
             System.out.println("Please enter your API key");

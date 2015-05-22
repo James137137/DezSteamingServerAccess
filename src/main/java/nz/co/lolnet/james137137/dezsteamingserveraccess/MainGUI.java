@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -32,14 +33,16 @@ public class MainGUI extends JFrame {
     private static boolean currentState = false; //false = offline, true = online
     static boolean busy = false;
     private final LinedBoxPanel buttonsPanel = new LinedBoxPanel(true).fullyPadded();
+    private final LinedBoxPanel buttonsPane2 = new LinedBoxPanel(true).fullyPadded();
     public static final JButton startStopButton = new JButton("Start Server");
     public static final JButton changeSnapshotButton = new JButton("Change Snapshot");
+    public static final JCheckBoxMenuItem closeServerOnExit = new JCheckBoxMenuItem("Close Server on Quit");
 
     public MainGUI() throws HeadlessException {
         super("Server is Online");
         this.setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(300, 100);
+        this.setSize(500, 100);
         setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getSize().width / 2 - 50, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - getSize().height / 2);
         initComponents();
         try {
@@ -123,12 +126,17 @@ public class MainGUI extends JFrame {
 
         });
 
+        closeServerOnExit.setState(Boolean.parseBoolean(java.util.prefs.Preferences.userRoot().get("dezsteamingserveraccessdestoryserveronexit", "")));
+        buttonsPane2.add(closeServerOnExit);
+
         buttonsPanel.addGlue();
         buttonsPanel.add(startStopButton);
         buttonsPanel.addGlue();
         buttonsPanel.add(changeSnapshotButton);
         buttonsPanel.addGlue();
+        buttonsPanel.add(closeServerOnExit,BorderLayout.SOUTH);
         add(buttonsPanel, BorderLayout.SOUTH);
+        
 
     }
 
@@ -142,8 +150,7 @@ public class MainGUI extends JFrame {
         if (result == JOptionPane.OK_OPTION) {
             int newID = Integer.parseInt(combo.getSelectedItem().toString().split(" -")[0]);
             System.out.println(newID);
-            if (Main.imageId != newID)
-            {
+            if (Main.imageId != newID) {
                 MyAPIMethods.changeSnapshotID(newID);
             }
         } else {
