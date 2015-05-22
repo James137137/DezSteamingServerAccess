@@ -8,6 +8,8 @@ package nz.co.lolnet.james137137.dezsteamingserveraccess;
 import com.myjeeva.digitalocean.exception.DigitalOceanException;
 import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -15,7 +17,10 @@ import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 /**
@@ -27,8 +32,8 @@ public class MainGUI extends JFrame {
     private static boolean currentState = false; //false = offline, true = online
     static boolean busy = false;
     private final LinedBoxPanel buttonsPanel = new LinedBoxPanel(true).fullyPadded();
-    private final LinedBoxPanel buttonsPane2 = new LinedBoxPanel(true).fullyPadded();
     public static final JButton startStopButton = new JButton("Start Server");
+    public static final JButton changeSnapshotButton = new JButton("Change Snapshot");
 
     public MainGUI() throws HeadlessException {
         super("Server is Online");
@@ -103,12 +108,47 @@ public class MainGUI extends JFrame {
             }
         });
 
+        changeSnapshotButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EventQueue.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        displaySnapshotOptions();
+                    }
+                });
+            }
+
+        });
+
         buttonsPanel.addGlue();
         buttonsPanel.add(startStopButton);
         buttonsPanel.addGlue();
-        buttonsPane2.addGlue();
+        buttonsPanel.add(changeSnapshotButton);
+        buttonsPanel.addGlue();
         add(buttonsPanel, BorderLayout.SOUTH);
 
+    }
+
+    private static void displaySnapshotOptions() {
+        String[] items = MyAPIMethods.getSnapshotList();
+        JComboBox combo = new JComboBox(items);
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(combo);
+        int result = JOptionPane.showConfirmDialog(null, panel, "Test",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            int newID = Integer.parseInt(combo.getSelectedItem().toString().split(" -")[0]);
+            System.out.println(newID);
+            if (Main.imageId != newID)
+            {
+                MyAPIMethods.changeSnapshotID(newID);
+            }
+        } else {
+            System.out.println("Cancelled");
+        }
     }
 
 }

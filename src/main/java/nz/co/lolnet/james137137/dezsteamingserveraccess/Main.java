@@ -17,6 +17,7 @@ import com.myjeeva.digitalocean.pojo.Snapshot;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -30,24 +31,27 @@ import javax.swing.JButton;
  */
 public class Main {
 
+    
     public static final String serverName = "Stream";
-    public static Integer imageId;
+    public static Integer imageId; //11937487 20-05-15   11966377 22-05-15
     public static final String domainName = "dezil.ddns.net";
-    public static final int portToPing = 80;
+    static boolean debug = true;
 
     public static DigitalOcean apiClient;
-
 
     public static void main(String[] args) {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
-                try {
-                    if (MyAPIMethods.serverExist(Main.serverName)) {
-                        MyAPIMethods.destoryServer(Main.serverName, null);
+                if (!debug) {
+                    try {
+                        if (MyAPIMethods.serverExist(Main.serverName)) {
+                            MyAPIMethods.destoryServer(Main.serverName, null);
+                        }
+                    } catch (DigitalOceanException | RequestUnsuccessfulException ex) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (DigitalOceanException | RequestUnsuccessfulException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 }
+
             }
         }, "Shutdown-thread"));
         Scanner myScanner = new Scanner(System.in);
@@ -66,7 +70,7 @@ public class Main {
         }
         String imageID = userNodeForPackage.get("streamdigitaloceanimageid", "");
         if (imageID == null || imageID.equalsIgnoreCase("")) {
-            imageId = 11937487;
+            imageId = 11966377;
         } else {
             imageId = Integer.parseInt(imageID);
         }
@@ -143,6 +147,7 @@ public class Main {
 
                 case "changesnapshot": {
                     try {
+                        System.out.println("This program is currently using ID: " + imageId);
                         System.out.println("Current snapshots are:");
                         for (Droplet droplet : apiClient.getAvailableDroplets(1).getDroplets()) {
                             List<Snapshot> snapshots = apiClient.getAvailableSnapshots(droplet.getId(), 1).getSnapshots();
@@ -164,7 +169,6 @@ public class Main {
             }
         }
     }
-
 
     public static class CreateServer implements Runnable {
 

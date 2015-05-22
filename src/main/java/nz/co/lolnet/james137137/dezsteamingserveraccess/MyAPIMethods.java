@@ -11,12 +11,13 @@ import com.myjeeva.digitalocean.pojo.Droplet;
 import com.myjeeva.digitalocean.pojo.Droplets;
 import com.myjeeva.digitalocean.pojo.Image;
 import com.myjeeva.digitalocean.pojo.Region;
+import com.myjeeva.digitalocean.pojo.Snapshot;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import javax.swing.JButton;
 
 /**
@@ -42,26 +43,12 @@ public class MyAPIMethods {
         System.out.println("");
     }
 
-    public static boolean SimplePing(String IP, int Port) {
-        Socket socket = null;
-        boolean reachable = false;
-        try {
-            socket = new Socket(IP, Port);
-            reachable = true;
-        } catch (IOException ex) {
-        } finally {
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-        return reachable;
-    }
-
     public static boolean SimplePing() {
-        return SimplePing(Main.domainName, Main.portToPing);
+        try {
+            return java.net.InetAddress.getByName(Main.domainName).isReachable(5000);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public static boolean serverExist(String ServerName) throws DigitalOceanException, RequestUnsuccessfulException {
@@ -193,7 +180,7 @@ public class MyAPIMethods {
         ((JButton) event.getSource()).setText("Pinging server");
         System.out.println("Waiting for domain to be reachable...");
         System.out.print("Please wait");
-        while (!SimplePing(Main.domainName, Main.portToPing)) {
+        while (!SimplePing()) {
             System.out.print(".");
             if (i == 0) {
                 ((JButton) event.getSource()).setText("Pinging server.");
@@ -207,11 +194,6 @@ public class MyAPIMethods {
                 i = 0;
             }
             i++;
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
         System.out.println("");
         ((JButton) event.getSource()).setText("Server Ready");
@@ -236,5 +218,29 @@ public class MyAPIMethods {
         System.out.println("help");
         System.out.println("exit");
     }
-    
+
+    static String[] getSnapshotList() {
+        List<String> list = new ArrayList<>();
+        list.add(Main.imageId + " - Current");
+        try {
+            for (Droplet droplet : Main.apiClient.getAvailableDroplets(1).getDroplets()) {
+                List<Snapshot> snapshots = Main.apiClient.getAvailableSnapshots(droplet.getId(), 1).getSnapshots();
+                for (Snapshot snapshot : snapshots) {
+                    list.add(snapshot.getId() + " - " + snapshot.getName());
+                }
+            }
+        } catch (DigitalOceanException ex) {
+            Logger.getLogger(MyAPIMethods.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RequestUnsuccessfulException ex) {
+            Logger.getLogger(MyAPIMethods.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return (String[]) list.toArray(new String[list.size()]);
+    }
+
+    static void changeSnapshotID(int newID) {
+        Preferences userNodeForPackage = java.util.prefs.Preferences.userRoot();
+        Main.imageId = newID;
+        userNodeForPackage.put("streamdigitaloceanimageid", "" + Main.imageId);
+    }
+
 }
