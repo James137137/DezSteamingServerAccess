@@ -38,7 +38,6 @@ public class CheckServerInfo implements Runnable {
                 output += "</html>";
                 MainGUI.serverInfoJLabel.setText(output);
             } catch (IOException ex) {
-                Logger.getLogger(CheckServerInfo.class.getName()).log(Level.SEVERE, null, ex);
             }
             try {
                 Thread.sleep(6000);

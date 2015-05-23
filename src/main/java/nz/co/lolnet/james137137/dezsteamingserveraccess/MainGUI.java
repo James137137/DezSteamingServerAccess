@@ -39,7 +39,7 @@ public class MainGUI extends JFrame {
     public static final JButton startStopButton = new JButton("Start Server");
     public static final JButton changeSnapshotButton = new JButton("Change Snapshot");
     public static final JCheckBoxMenuItem closeServerOnExit = new JCheckBoxMenuItem("Close Server on Quit");
-    public static JLabel serverInfoJLabel = new JLabel("");
+    public static JLabel serverInfoJLabel = new JLabel("Server Info Goes here");
 
     public MainGUI() throws HeadlessException {
         super("Server is Online");
