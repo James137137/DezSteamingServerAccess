@@ -14,6 +14,11 @@ import com.myjeeva.digitalocean.pojo.Images;
 import com.myjeeva.digitalocean.pojo.Region;
 import com.myjeeva.digitalocean.pojo.Snapshot;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -26,6 +31,59 @@ import javax.swing.JButton;
  * @author James
  */
 public class MyAPIMethods {
+
+    public static List<String> getServerInfo() throws MalformedURLException, IOException {
+        URL oracle = new URL("http://" + Main.domainName + "/computerInfo.txt");
+        List<String> serverInfo = new ArrayList<>();
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(oracle.openStream()));
+
+        String inputLine;
+        String freeMemory = null;
+        String totalMemory = null;
+        boolean memoryDone = false;
+        int line = 1;
+        while ((inputLine = in.readLine()) != null) {
+            if (line == 1) {
+                serverInfo.add("CPU:"+ "\t" + inputLine + "%");
+            } else if (line == 3) {
+                int count = 1;
+                for (String arg : inputLine.split(" ")) {
+                    if (!arg.equals("")) {
+                        if (count == 2) {
+                            totalMemory = arg;
+                        }
+                        count++;
+                    }
+
+                }
+            } else if (line == 4) {
+                int count = 1;
+                for (String arg : inputLine.split(" ")) {
+                    if (!arg.equals("")) {
+                        if (count == 4) {
+
+                            freeMemory = arg;
+                        }
+                        count++;
+                    }
+
+                }
+
+            }
+
+            if (totalMemory != null && freeMemory != null && !memoryDone) {
+                int memoryFreeP = 100 - (int) (Double.parseDouble(freeMemory) * 100 / Double.parseDouble(totalMemory));
+                serverInfo.add("Memory:" + "\t" + memoryFreeP + "%");
+                memoryDone = true;
+            }
+
+            line++;
+        }
+        in.close();
+
+        return serverInfo;
+    }
 
     public static void serverInfo() throws DigitalOceanException, RequestUnsuccessfulException {
         System.out.println("Your current server info:");

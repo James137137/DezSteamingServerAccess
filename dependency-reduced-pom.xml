@@ -4,7 +4,7 @@
   <groupId>nz.co.lolnet.james137137</groupId>
   <artifactId>DezSteamingServerAccess</artifactId>
   <name>DezSteamingServerAccess</name>
-  <version>1.0</version>
+  <version>0.0.1</version>
   <build>
     <finalName>DezSteamingServerAccess</finalName>
     <plugins>

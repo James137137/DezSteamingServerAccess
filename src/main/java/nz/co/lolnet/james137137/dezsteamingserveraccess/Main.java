@@ -12,6 +12,7 @@ import com.myjeeva.digitalocean.impl.DigitalOceanClient;
 import com.myjeeva.digitalocean.pojo.Droplet;
 import com.myjeeva.digitalocean.pojo.Snapshot;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -25,7 +26,6 @@ import javax.swing.JButton;
  */
 public class Main {
 
-    
     public static final String serverName = "Stream";
     public static Integer imageId; //11937487 20-05-15   11966377 22-05-15
     public static final String domainName = "dezil.ddns.net";
