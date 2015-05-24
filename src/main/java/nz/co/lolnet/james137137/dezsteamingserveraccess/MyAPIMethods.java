@@ -42,10 +42,12 @@ public class MyAPIMethods {
         String freeMemory = null;
         String totalMemory = null;
         boolean memoryDone = false;
+        boolean internetDone  = false;
+        String data = null;
         int line = 1;
         while ((inputLine = in.readLine()) != null) {
             if (line == 1) {
-                serverInfo.add("CPU:"+ "\t" + inputLine + "%");
+                serverInfo.add("CPU:" + "\t" + inputLine + "%");
             } else if (line == 3) {
                 int count = 1;
                 for (String arg : inputLine.split(" ")) {
@@ -70,6 +72,23 @@ public class MyAPIMethods {
 
                 }
 
+            } else if (line == 9) {
+                int count = 1;
+                for (String arg : inputLine.split(" ")) {
+                    if (!arg.equals("")) {
+                        if (count == 9) {
+                            data = arg;
+                        } else if (count == 10) {
+                            data += " " + arg;
+                        }
+                        count++;
+                    }
+
+                }
+            }
+            if (data != null && !internetDone) {
+                serverInfo.add("internet usage: " + data);
+                internetDone = true;
             }
 
             if (totalMemory != null && freeMemory != null && !memoryDone) {

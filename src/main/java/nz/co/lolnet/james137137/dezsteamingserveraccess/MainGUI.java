@@ -134,7 +134,7 @@ public class MainGUI extends JFrame {
         
         
         buttonsPane2.addGlue();
-        buttonsPane2.add(serverInfoJLabel,BorderLayout.WEST);
+        buttonsPane2.add(serverInfoJLabel);
         add(buttonsPane2);
         buttonsPanel.addGlue();
         buttonsPanel.add(startStopButton);
