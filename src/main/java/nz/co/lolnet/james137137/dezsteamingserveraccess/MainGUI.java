@@ -38,6 +38,7 @@ public class MainGUI extends JFrame {
     private final LinedBoxPanel buttonsPane3 = new LinedBoxPanel(true).fullyPadded();
     public static final JButton startStopButton = new JButton("Start Server");
     public static final JButton changeSnapshotButton = new JButton("Change Snapshot");
+    public static final JButton changeAPIKeyButton = new JButton("Change API key");
     public static final JCheckBoxMenuItem closeServerOnExit = new JCheckBoxMenuItem("Close Server on Quit");
     public static JLabel serverInfoJLabel = new JLabel("Server Info Goes here");
 
@@ -124,6 +125,25 @@ public class MainGUI extends JFrame {
                     @Override
                     public void run() {
                         displaySnapshotOptions();
+                    }
+                });
+            }
+
+        });
+        
+        changeAPIKeyButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EventQueue.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (MyAPIMethods.changeAPIKey())
+                        {
+                            JOptionPane.showMessageDialog(null, "Please restart your client");
+                        }
+                        
                     }
                 });
             }

@@ -11,14 +11,18 @@ import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.impl.DigitalOceanClient;
 import com.myjeeva.digitalocean.pojo.Droplet;
 import com.myjeeva.digitalocean.pojo.Snapshot;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  *
@@ -53,10 +57,11 @@ public class Main {
         Scanner myScanner = new Scanner(System.in);
         String APIKey = userNodeForPackage.get("streamdigitaloceanapikey", "");
         if (APIKey == null || APIKey.equalsIgnoreCase("")) {
-            System.out.println("Please enter your API key");
-            APIKey = myScanner.nextLine();
-            userNodeForPackage.put("streamdigitaloceanapikey", APIKey);
-
+            boolean result = MyAPIMethods.changeAPIKey();
+            if (!result) {
+                JOptionPane.showMessageDialog(null, "You must enter an API key");
+                System.exit(0);
+            }
         }
         apiClient = new DigitalOceanClient(APIKey);
         new MainGUI().setVisible(true);

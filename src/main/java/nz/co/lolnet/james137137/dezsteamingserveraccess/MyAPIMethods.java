@@ -13,6 +13,7 @@ import com.myjeeva.digitalocean.pojo.Image;
 import com.myjeeva.digitalocean.pojo.Images;
 import com.myjeeva.digitalocean.pojo.Region;
 import com.myjeeva.digitalocean.pojo.Snapshot;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,6 +26,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  *
@@ -42,7 +46,7 @@ public class MyAPIMethods {
         String freeMemory = null;
         String totalMemory = null;
         boolean memoryDone = false;
-        boolean internetDone  = false;
+        boolean internetDone = false;
         String data = null;
         int line = 1;
         while ((inputLine = in.readLine()) != null) {
@@ -317,6 +321,23 @@ public class MyAPIMethods {
         Preferences userNodeForPackage = java.util.prefs.Preferences.userRoot();
         Main.imageId = newID;
         userNodeForPackage.put("streamdigitaloceanimageid", "" + Main.imageId);
+    }
+
+    public static boolean changeAPIKey() {
+        Preferences userNodeForPackage = java.util.prefs.Preferences.userRoot();
+        JTextField field1 = new JTextField(userNodeForPackage.get("streamdigitaloceanapikey", ""));
+
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(field1);
+        int result = JOptionPane.showConfirmDialog(null, panel, "Set API key",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            if (field1.getText().length() <= 20) {
+                userNodeForPackage.put("streamdigitaloceanapikey", field1.getText());
+            }
+            return true;
+        }
+        return false;
     }
 
 }
