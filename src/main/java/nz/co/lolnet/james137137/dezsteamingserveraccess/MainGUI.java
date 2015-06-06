@@ -46,7 +46,7 @@ public class MainGUI extends JFrame {
         super("Server is Online");
         this.setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(500, 200);
+        this.setSize(600, 200);
         setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getSize().width / 2 - 50, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - getSize().height / 2);
         initComponents();
         try {
@@ -160,6 +160,8 @@ public class MainGUI extends JFrame {
         buttonsPanel.add(startStopButton);
         buttonsPanel.addGlue();
         buttonsPanel.add(changeSnapshotButton);
+        buttonsPanel.addGlue();
+        buttonsPanel.add(changeAPIKeyButton);
         buttonsPanel.addGlue();
         buttonsPanel.add(closeServerOnExit,BorderLayout.SOUTH);
         add(buttonsPanel, BorderLayout.SOUTH);
