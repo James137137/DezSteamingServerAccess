@@ -5,8 +5,10 @@
  */
 package nz.co.lolnet.james137137.dezsteamingserveraccess;
 
+import com.myjeeva.digitalocean.common.ActionStatus;
 import com.myjeeva.digitalocean.exception.DigitalOceanException;
 import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
+import com.myjeeva.digitalocean.pojo.Action;
 import com.myjeeva.digitalocean.pojo.Droplet;
 import com.myjeeva.digitalocean.pojo.Droplets;
 import com.myjeeva.digitalocean.pojo.Image;
@@ -149,8 +151,12 @@ public class MyAPIMethods {
             ((JButton) event.getSource()).setText("Stoping Server");
         }
         List<Droplet> droplets = Main.apiClient.getAvailableDroplets(0).getDroplets();
+
         for (Droplet droplet : droplets) {
             if (droplet.getName().equals(serverName)) {
+                if (MainGUI.saveOnStop.getState()) {
+                    CreateSnapshot(droplet);
+                }
                 Main.apiClient.deleteDroplet(droplet.getId());
                 System.out.println("Removed");
             }
@@ -158,13 +164,13 @@ public class MyAPIMethods {
         int i = 0;
         while (serverExist(serverName)) {
             if (i == 0 && event != null) {
-                ((JButton) event.getSource()).setText("Stoping Server.");
+                ((JButton) event.getSource()).setText("deleting Server.");
             } else if (i == 1 && event != null) {
-                ((JButton) event.getSource()).setText("Stoping Server..");
+                ((JButton) event.getSource()).setText("deleting Server..");
             } else if (i == 2 && event != null) {
-                ((JButton) event.getSource()).setText("Stoping Server...");
+                ((JButton) event.getSource()).setText("deleting Server...");
             } else if (event != null) {
-                ((JButton) event.getSource()).setText("Stoping Server");
+                ((JButton) event.getSource()).setText("deleting Server");
                 i = 0;
             }
             i++;
@@ -304,7 +310,6 @@ public class MyAPIMethods {
     static String[] getSnapshotList() {
         List<String> list = new ArrayList<>();
         list.add(Main.imageId + " - Current");
-
         try {
             for (Image image : Main.apiClient.getUserImages(0).getImages()) {
                 list.add(image.getId() + " - " + image.getName() + " - " + image.getCreatedDate());
@@ -332,12 +337,55 @@ public class MyAPIMethods {
         int result = JOptionPane.showConfirmDialog(null, panel, "Set API key",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION) {
-            if (field1.getText().length() <= 20) {
+            if (field1.getText().length() >= 20) {
                 userNodeForPackage.put("streamdigitaloceanapikey", field1.getText());
             }
             return true;
         }
         return false;
+    }
+
+    private static void CreateSnapshot(Droplet droplet) throws DigitalOceanException, RequestUnsuccessfulException {
+
+        Main.apiClient.shutdownDroplet(droplet.getId());
+
+        boolean saved = false;
+        Action takeDropletSnapshot = null;
+        String snapshotName = Main.serverName + "-AutoSave-" + System.currentTimeMillis();
+        while (!saved) {
+            try {
+                takeDropletSnapshot = Main.apiClient.takeDropletSnapshot(droplet.getId(), snapshotName);
+                System.out.println("Request Snapshot");
+                saved = true;
+            } catch (Exception e) {
+                System.out.println("Failed to request to save server");
+                e.printStackTrace();
+            }
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        boolean snapshotCreated = false;
+        while (!snapshotCreated) {
+            for (Image image : Main.apiClient.getUserImages(0).getImages()) {
+                System.out.print(image.getName() + ", ");
+                if (image.getName().equalsIgnoreCase(snapshotName))
+                {
+                    changeSnapshotID(image.getId());
+                    snapshotCreated = true;
+                }
+            }
+            System.out.println();
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
     }
 
 }

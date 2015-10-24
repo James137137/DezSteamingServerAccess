@@ -40,13 +40,14 @@ public class MainGUI extends JFrame {
     public static final JButton changeSnapshotButton = new JButton("Change Snapshot");
     public static final JButton changeAPIKeyButton = new JButton("Change API key");
     public static final JCheckBoxMenuItem closeServerOnExit = new JCheckBoxMenuItem("Close Server on Quit");
+    public static final JCheckBoxMenuItem saveOnStop = new JCheckBoxMenuItem("Save on Stop");
     public static JLabel serverInfoJLabel = new JLabel("Server Info Goes here");
 
     public MainGUI() throws HeadlessException {
         super("Server is Online");
         this.setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(600, 200);
+        this.setSize(800, 200);
         setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - getSize().width / 2 - 50, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - getSize().height / 2);
         initComponents();
         try {
@@ -151,6 +152,7 @@ public class MainGUI extends JFrame {
         });
 
         closeServerOnExit.setState(Boolean.parseBoolean(java.util.prefs.Preferences.userRoot().get("dezsteamingserveraccessdestoryserveronexit", "")));
+        saveOnStop.setState(Boolean.parseBoolean(java.util.prefs.Preferences.userRoot().get("dezsteamingserveraccesssaveonstop", "")));
         
         
         buttonsPane2.addGlue();
@@ -164,6 +166,7 @@ public class MainGUI extends JFrame {
         buttonsPanel.add(changeAPIKeyButton);
         buttonsPanel.addGlue();
         buttonsPanel.add(closeServerOnExit,BorderLayout.SOUTH);
+        buttonsPanel.add(saveOnStop,BorderLayout.SOUTH);
         add(buttonsPanel, BorderLayout.SOUTH);
         
 

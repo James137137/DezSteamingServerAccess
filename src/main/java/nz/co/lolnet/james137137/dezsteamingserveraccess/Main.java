@@ -11,7 +11,6 @@ import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.impl.DigitalOceanClient;
 import com.myjeeva.digitalocean.pojo.Droplet;
 import com.myjeeva.digitalocean.pojo.Snapshot;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Scanner;
@@ -19,10 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 /**
  *
@@ -30,10 +26,16 @@ import javax.swing.JTextField;
  */
 public class Main {
 
+    //cf861046b04df91c60e336433ac1c960b28537a27a8fccc248f5e55d1a58676d
+    //fa40b7fe9f73b2d65f7a5800e6b871aabb27d8a39219a401e21c103db0c611fd
+    
+    
     public static final String serverName = "Stream";
     public static Integer imageId; //11937487 20-05-15   11966377 22-05-15
     public static final String domainName = "dezil.ddns.net";
+    //public static final String domainName = "192.241.212.135";
     static boolean debug = true;
+    boolean createSnapshotOnStop = false;
 
     public static DigitalOcean apiClient;
 
@@ -51,6 +53,7 @@ public class Main {
                     }
                 }
                 java.util.prefs.Preferences.userRoot().put("dezsteamingserveraccessdestoryserveronexit", "" + MainGUI.closeServerOnExit.getState());
+                java.util.prefs.Preferences.userRoot().put("dezsteamingserveraccesssaveonstop", "" + MainGUI.saveOnStop.getState());
 
             }
         }, "Shutdown-thread"));
@@ -64,9 +67,11 @@ public class Main {
             }
         }
         apiClient = new DigitalOceanClient(APIKey);
+        System.out.println(APIKey);
         new MainGUI().setVisible(true);
         if (!MyAPIMethods.checkClient()) {
             System.out.println("Something went wrong. Check your key");
+            boolean result = MyAPIMethods.changeAPIKey();
         }
         String imageID = userNodeForPackage.get("streamdigitaloceanimageid", "");
         if (imageID == null || imageID.equalsIgnoreCase("")) {
